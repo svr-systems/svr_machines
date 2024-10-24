@@ -86,11 +86,11 @@ class UserController extends Controller {
           "ok" => false,
           "msg" => $validator->errors()->first(),
           "err" => $validator->errors()->first(),
-        ], 200);
+        ], 500);
       }
 
       if (is_null($id)) {
-        $data = new User();
+        $data = new User;
         $data->password = bcrypt(trim($req->password));
         $data->created_by_id = $req->user()->id;
       } else {
@@ -110,7 +110,7 @@ class UserController extends Controller {
         "ok" => false,
         "msg" => "Error. Contacte al equipo de desarrollo",
         "err" => "ERROR => " . $th
-      ], 200);
+      ], 500);
     }
   }
 
