@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\MachineController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\SaleController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -24,6 +25,7 @@ Route::group([
 
 //AUTH
 Route::group(["middleware" => "auth:api"], function () {
+  Route::apiResource("sales", SaleController::class);
   Route::apiResource("machines", MachineController::class);
   Route::apiResource("users", UserController::class);
 
