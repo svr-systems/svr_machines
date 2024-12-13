@@ -120,7 +120,7 @@ class SaleController extends Controller {
   }
 
   public function saveData($data, $req) {
-    $data->updated_by_id = $req->user()->id;
+    $data->updated_by_id = isset($req->updated_by_id) ? isset($req->updated_by_id) : $req->user()->id;
     $data->machine_date = GenController::filter($req->machine_date, "d");
     $data->pump = GenController::filter($req->pump, "i");
     $data->quantity = GenController::filter($req->quantity, "f");
@@ -129,5 +129,36 @@ class SaleController extends Controller {
     $data->save();
 
     return $data;
+  }
+
+  public function storeMultiple(Request $req) {
+    DB::beginTransaction();
+    try {
+      foreach ($req->sales as $sale) {
+        $data = new Sale;
+        $data->created_by_id = $req->user()->id;
+
+        $this->saveData($data, new Request([
+          'machine_date' => $sale->machine_date,
+          'pump' => $sale->pump,
+          'quantity' => $sale->quantity,
+          'amount' => $sale->amount,
+          'machine_id' => $sale->machine_id,
+          'updated_by_id' => $req->user()->id,
+        ]));
+      }
+
+      return response()->json([
+        "ok" => true,
+        "msg" => "Registros creados correctamente"
+      ], 200);
+    } catch (\Throwable $th) {
+      DB::rollback();
+      return response()->json([
+        "ok" => false,
+        "msg" => "Error. Contacte al equipo de desarrollo",
+        "err" => "ERROR => " . $th
+      ], 500);
+    }
   }
 }

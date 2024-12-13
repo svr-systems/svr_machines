@@ -25,6 +25,7 @@ Route::group([
 
 //AUTH
 Route::group(["middleware" => "auth:api"], function () {
+  Route::post("sales/pending", [SaleController::class, 'storeMultiple']);
   Route::apiResource("sales", SaleController::class);
   Route::apiResource("machines", MachineController::class);
   Route::apiResource("users", UserController::class);
